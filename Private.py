@@ -481,10 +481,10 @@ class CreateAcount:
         domain_list = os.getenv("DOMAINS").split(",")
         domain = random.choice(domain_list)
         nama = ''.join(random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=random.randint(8, 12)))
-        email_address = f"{nama}@{domain}"
-        PlanktonDev.data = {"reg_email__": email_address}
-        print(f"Generated Local Email: {email_address}")
-        return email_address
+        mail = f"{nama}@{domain}"
+        PlanktonDev.data = {"reg_email__": mail}
+        print(f"Generated Local Email: {mail}")
+        return mail
 
     def CreatePassword(PlanktonDev):
         abs = random.choice(['abcdefghijklmnopqrstuvwxyz'])
@@ -669,7 +669,7 @@ class CreateAcount:
                 cetak(gabung)
                 cp+=1
 
-def fetch_verification_code_from_mailu(email_address, retry=3):
+def fetch_verification_code_from_mailu(mail, retry=3):
     CATCHALL_EMAIL = os.getenv("CATCHALL_EMAIL")  # Email catch-all, misalnya catchall@example.com
     EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
     IMAP_SERVER = os.getenv("IMAP_SERVER")
@@ -686,7 +686,7 @@ def fetch_verification_code_from_mailu(email_address, retry=3):
                 mail.select("inbox")
 
                 # Cari email berdasarkan alamat tujuan
-                status, messages = mail.search(None, f'TO "{email_address}" UNSEEN')
+                status, messages = mail.search(None, f'TO "{mail}" UNSEEN')
                 if status == "OK" and messages[0]:
                     for num in messages[0].split():
                         status, data = mail.fetch(num, "(RFC822)")
@@ -701,7 +701,7 @@ def fetch_verification_code_from_mailu(email_address, retry=3):
             print(f"Error saat membaca email: {e}. Retrying...")
             retry -= 1
 
-    raise ConnectionError(f"Gagal membaca kode verifikasi untuk email: {email_address}")
+    raise ConnectionError(f"Gagal membaca kode verifikasi untuk email: {mail}")
 
 def GetCodeV2(PlanktonDev, gabung, Email, pasw, cokie):
     global ok
