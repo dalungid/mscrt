@@ -81,7 +81,7 @@ class BotMenu:
 
     def AddFriends1(PlanktonDev , uid):
         xx = uid.splitlines()
-        try:file = open('/sdcard/mscrt/AkunLive.txt' , 'r').readlines()
+        try:file = open('/AkunLive.txt' , 'r').readlines()
         except(FileNotFoundError):Console(width=64).print(Panel('[italic Green]Tidak Ada Akun Live' , width = 64 , style = 'bold white') , justify = 'center')
         for x in file:
             uid , pasw , cok = x.split('|')[0] , x.split('|')[0][1] ,  x.split('|')[2]
@@ -133,7 +133,7 @@ class BotMenu:
                  break
 
     def AddFriends3(PlanktonDev):
-        try:file = open('/sdcard/mscrt/AkunLive.txt' , 'r').readlines()
+        try:file = open('/AkunLive.txt' , 'r').readlines()
         except(FileNotFoundError):Console(width=64).print(Panel('[italic Green]Tidak Ada Akun Live' , width = 64 , style = 'bold white') , justify = 'center')
         for x in file:
             uid , pasw , cok = x.split('|')[0] , x.split('|')[0][1] ,  x.split('|')[2]
@@ -272,7 +272,7 @@ class TanyaTanya:
             user2 = Console().input('[bold white]([bold green]•[bold white]) Pilih Y/T : ')
             if user2 in ['y','Y']:
                 try:
-                    os.system('rm -rf /sdcard/mscrt/AkunLive.txt')
+                    os.system('rm -rf /AkunLive.txt')
                     file = open('AkunCreate.txt' , 'r').readlines()
                     Console(width = 64).print(Panel(f'[italic green]Total Akun Yang Ada Di File : [italic white] {len(file)}' , width = 64 , style = 'bold white') , justify = 'center')
                     for akun in file:
@@ -290,7 +290,7 @@ class TanyaTanya:
                                 tree.add('[bold green]m.facebook.com/'+str(userID))
                                 tree.add('[bold green]'+str(cokie))
                                 cetak(tree)
-                                with open('/sdcard/mscrt/AkunLive.txt' , 'a') as x:
+                                with open('/AkunLive.txt' , 'a') as x:
                                     x.write(userID +' - ' + pasw +' '+ "\n")
                                 okx+=1
                             except:pass
@@ -302,7 +302,7 @@ class TanyaTanya:
             elif user2 in ['t','T']:
                 try:
                     os.system('rm -rf AkunLiveN.txt')
-                    file = open('/sdcard/mscrt/NonConfirmCreate.txt' , 'r').readlines()
+                    file = open('/NonConfirmCreate.txt' , 'r').readlines()
                     Console(width = 64).print(Panel(f'[italic green]Total Akun Yang Ada Di File : [italic white] {len(file)}' , width = 64 , style = 'bold white') , justify = 'center')
                     for akun in file:
                         email , pasw , cokie  , kode = akun.split('|')[0] , akun.split('|')[1] , akun.split('|')[2] , akun.split('|')[3]
@@ -727,7 +727,7 @@ def GetCodeV2(PlanktonDev, gabung, Email, pasw, cokie):
         verif.add(f"Proxy  : [italic green]{prox}")
         PlanktonDev.ConfirmEmail(kode, gabung, verif)
     elif autoconfirm[0] in ["t", "T"]:
-        with open("/sdcard/mscrt/NonConfirmCreate.txt", "a") as fu:
+        with open("/NonConfirmCreate.txt", "a") as fu:
             fu.write(Email + "|" + pasw + "|" + cokie + "|" + kode + "\n")
         verif.add(f"Kode     : [italic green]{kode}")
         verif.add(f"Proxy    : [italic green]{prox}")
@@ -985,66 +985,50 @@ def GetCodeV2(PlanktonDev, gabung, Email, pasw, cokie):
                 cetak(gabung)
                 ok+=1
 
-def cekdurasi(created , exp , key):
-    tahun , bulan , tanggal = exp.split('T')[0].split('-')
-    opoki = datetime(int(tahun) , int(bulan) , int(tanggal))
-    opoke = opoki.strftime('%Y-%m-%d %H:%M:%S')
-    opoku = datetime.strptime(opoke , '%Y-%m-%d %H:%M:%S')
+def cekdurasi(created, exp, key):
+    tahun, bulan, tanggal = exp.split('T')[0].split('-')
+    opoku = datetime(int(tahun), int(bulan), int(tanggal))
     ceku = opoku - datetime.now()
-    if ceku.days<1:
+
+    if ceku.days < 1:
         keyu = str(ceku).split('.')[0]
         nol = keyu.split(':')[0]
-        if int(nol)<1:
-            cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Telah Berakhir Pada : {tahun}-{bulan}-{tanggal}')
-            os.remove('/sdcard/mscrt/Datakey/.licenkey')
+        if int(nol) < 1:
+            cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Telah Berakhir Pada: {tahun}-{bulan}-{tanggal}')
+            if os.path.exists(licenkey_file):
+                os.remove(licenkey_file)
         else:
             cetak('\n[bold white]([bold green]©[bold white]) PlanktonDev')
-            cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
-            cetak(f'[bold white]([bold green]•[bold white]) Key     : {key}')
-            cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
-            cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
             cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {keyu}')
-            open('/sdcard/mscrt/Datakey/.licenkey' , 'w').write(key)
+            with open(licenkey_file, 'w') as file:
+                file.write(key)
     else:
         sisa = str(ceku).split(',')[0]
-        cetak('\n[bold white]([bold green]©[bold white]) Plankton Dev')
         cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
-        cetak(f'[bold white]([bold green]•[bold white]) Key     : {key}')
-        cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
-        cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
         cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {sisa}')
-        open('/sdcard/mscrt/Datakey/.licenkey' , 'w').write(key)
+        with open(licenkey_file, 'w') as file:
+            file.write(key)
 
 def lisensi():
+    if not os.path.exists(licenkey_file):
+        os.makedirs(os.path.dirname(licenkey_file), exist_ok=True)
+
     try:
-        key = open('/sdcard/mscrt/Datakey/.licenkey' , 'r').read()
-    except(FileNotFoundError):
-        os.system('clear')
-        cetak(f'[bold white]([bold green]01[bold white]) Beli Lisensi\n[bold white]([bold green]02[bold white]) Masukan Lisensi')
-        user = Console().input('\n[bold white]([bold green]•[bold white]) Pilih : ')
-        if user in ['01','1']:
-            cetak(f'[bold white]([bold green]•[bold white]) Kamu Akan Diarahkan Ke Whatsapp Author')
-            os.system('xdg-open https://wa.me/+6285767630210?text=assalamualaikum%20bang%20ArifXeyracode%20Dev,%20beli%20license%20dong')
-            exit()
-        elif user in ['02','2']:
-            key = Console().input('[bold white]([bold green]•[bold white]) Masukan Lisensi : ')
+        with open(licenkey_file, 'r') as file:
+            key = file.read()
+    except FileNotFoundError:
+        key = input("Masukkan Lisensi: ")
+    
     try:
-        link = ses.get('https://api.cryptolens.io/api/key/GetKey?token=%s&ProductId=%s&Key=%s&Sign=True'%(token , id , key)).json()['licenseKey']
-        block = link['block']
+        response = ses.get(f'https://api.cryptolens.io/api/key/GetKey?token={token}&ProductId={id}&Key={key}')
+        link = response.json()['licenseKey']
         created = link['created']
         expires = link['expires']
-        if block == False:
-            cekdurasi(created , expires , key)
-            time.sleep(5)
-            TanyaTanya().Menu()
-        elif block == True:
-            cetak('[bold white]([bold red]×[bold white]) Maaf Lisensi Anda Telah Di Blokir')
-            os.remove('/sdcard/mscrt/Datakey/.licenkey')
-    except(FileNotFoundError) as s:pass
-    except(Exception) as e:
-        cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Tidak Valid')
+        cekdurasi(created, expires, key)
+    except Exception as e:
+        print(f"Error: {e}")
 
-if __name__ == '__main__':
-    try:os.mkdir('/sdcard/mscrt/Datakey/')
-    except:pass
+if __name__ == "__main__":
+    datakey_path = os.path.join(os.getcwd(), "Datakey")
+    licenkey_file = os.path.join(datakey_path, ".licenkey")
     lisensi()
