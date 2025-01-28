@@ -18,8 +18,8 @@ ok , cp = 0 , 0
 okx , cpx = 0 , 0
 autoconfirm , autopasw , proxy = [] , [] , []
 ses = requests.Session()
-token = 'WyIxMDIxODAzODQiLCI5VmozeHRsVENZMFhNQ3N0aGtOZTY0d1QxZnlXb1orUm9ZcldJbDNRIl0='
-id = '28726'
+token = "WyIxMDIxODAzODQiLCI5VmozeHRsVENZMFhNQ3N0aGtOZTY0d1QxZnlXb1orUm9ZcldJbDNRIl0="
+id = "28726"
 
 class BotMenu:
 
@@ -995,40 +995,87 @@ def cekdurasi(created, exp, key):
         nol = keyu.split(':')[0]
         if int(nol) < 1:
             cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Telah Berakhir Pada: {tahun}-{bulan}-{tanggal}')
-            if os.path.exists(licenkey_file):
-                os.remove(licenkey_file)
+            if os.path.exists('/Datakey/.licenkey'):
+                os.remove('/Datakey/.licenkey')
+            exit()  # Tambahkan exit di sini agar program berhenti jika lisensi kedaluwarsa
         else:
-            cetak('\n[bold white]([bold green]©[bold white]) PlanktonDev')
+            cetak('\n[bold white]([bold green]©[bold white]) Lisensi Terdaftar')
             cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {keyu}')
-            with open(licenkey_file, 'w') as file:
-                file.write(key)
     else:
         sisa = str(ceku).split(',')[0]
-        cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
+        cetak('\n[bold white]([bold green]©[bold white]) Lisensi Terdaftar')
         cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {sisa}')
-        with open(licenkey_file, 'w') as file:
+        with open('/Datakey/.licenkey', 'w') as file:
             file.write(key)
 
-def lisensi():
-    if not os.path.exists(licenkey_file):
-        os.makedirs(os.path.dirname(licenkey_file), exist_ok=True)
+    tahun , bulan , tanggal = exp.split('T')[0].split('-')
+    opoki = datetime(int(tahun) , int(bulan) , int(tanggal))
+    opoke = opoki.strftime('%Y-%m-%d %H:%M:%S')
+    opoku = datetime.strptime(opoke , '%Y-%m-%d %H:%M:%S')
+    ceku = opoku - datetime.now()
+    if ceku.days<1:
+        keyu = str(ceku).split('.')[0]
+        nol = keyu.split(':')[0]
+        if int(nol)<1:
+            cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Telah Berakhir Pada : {tahun}-{bulan}-{tanggal}')
+            os.remove('/Datakey/.licenkey')
+        else:
+            cetak('\n[bold white]([bold green]©[bold white]) PlanktonDev')
+            cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
+            cetak(f'[bold white]([bold green]•[bold white]) Key     : {key}')
+            cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
+            cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
+            cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {keyu}')
+            open('/Datakey/.licenkey' , 'w').write(key)
+    else:
+        sisa = str(ceku).split(',')[0]
+        cetak('\n[bold white]([bold green]©[bold white]) Plankton Dev')
+        cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
+        cetak(f'[bold white]([bold green]•[bold white]) Key     : {key}')
+        cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
+        cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
+        cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {sisa}')
+        open('/Datakey/.licenkey' , 'w').write(key)
 
+def lisensi():
     try:
-        with open(licenkey_file, 'r') as file:
-            key = file.read()
+        key = open('/Datakey/.licenkey', 'r').read()
     except FileNotFoundError:
-        key = input("Masukkan Lisensi: ")
+        os.system('clear')
+        cetak(f'[bold white]([bold green]01[bold white]) Beli Lisensi\n[bold white]([bold green]02[bold white]) Masukan Lisensi')
+        user = Console().input('\n[bold white]([bold green]•[bold white]) Pilih : ')
+        if user in ['01', '1']:
+            cetak(f'[bold white]([bold green]•[bold white]) Kamu Akan Diarahkan Ke Whatsapp Author')
+            os.system('xdg-open https://wa.me/+6285777785464?text=assalamualaikum%20bang%20Plankton%20Dev,%20beli%20license%20dong')
+            exit()
+        elif user in ['02', '2']:
+            key = Console().input('[bold white]([bold green]•[bold white]) Masukkan Lisensi : ')
     
     try:
         response = ses.get(f'https://api.cryptolens.io/api/key/GetKey?token={token}&ProductId={id}&Key={key}')
+        response.raise_for_status()
         link = response.json()['licenseKey']
+        
+        block = link['block']
         created = link['created']
         expires = link['expires']
-        cekdurasi(created, expires, key)
+        
+        if block == False:
+            cekdurasi(created, expires, key)
+            time.sleep(5)
+            # Pastikan ini terpanggil jika lisensi valid
+            TanyaTanya().Menu()
+        elif block == True:
+            cetak('[bold white]([bold red]×[bold white]) Maaf Lisensi Anda Telah Di Blokir')
+            if os.path.exists('/Datakey/.licenkey'):
+                os.remove('/Datakey/.licenkey')
+            exit()
+    except KeyError as e:
+        cetak(f"[bold white]([bold red]×[bold white]) Respons API tidak valid: {e}")
     except Exception as e:
-        print(f"Error: {e}")
+        cetak(f"[bold white]([bold red]×[bold white]) Error: {e}")
 
-if __name__ == "__main__":
-    datakey_path = os.path.join(os.getcwd(), "Datakey")
-    licenkey_file = os.path.join(datakey_path, ".licenkey")
+if __name__ == '__main__':
+    try:os.mkdir('/Datakey/')
+    except:pass
     lisensi()
