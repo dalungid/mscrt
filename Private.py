@@ -18,8 +18,8 @@ ok , cp = 0 , 0
 okx , cpx = 0 , 0
 autoconfirm , autopasw , proxy = [] , [] , []
 ses = requests.Session()
-token = os.getenv("TOKEN")
-id = os.getenv("ID")
+token = "WyIxMDIxODAzODQiLCI5VmozeHRsVENZMFhNQ3N0aGtOZTY0d1QxZnlXb1orUm9ZcldJbDNRIl0="
+id = "28726"
 
 class BotMenu:
 
