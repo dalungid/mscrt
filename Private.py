@@ -669,72 +669,50 @@ class CreateAcount:
                 cetak(gabung)
                 cp+=1
 
-def fetch_verification_code_from_mailu(email_address, retry=3):
-    CATCHALL_EMAIL = os.getenv("CATCHALL_EMAIL")  # Email catch-all, misalnya catchall@example.com
-    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-    IMAP_SERVER = os.getenv("IMAP_SERVER")
-    IMAP_PORT = int(os.getenv("IMAP_PORT"))
-
-    if not CATCHALL_EMAIL or not EMAIL_PASSWORD or not IMAP_SERVER or not IMAP_PORT:
-        raise ValueError("Konfigurasi IMAP tidak lengkap. Pastikan CATCHALL_EMAIL, EMAIL_PASSWORD, IMAP_SERVER, dan IMAP_PORT ada di .env")
-
-    while retry > 0:
+    def GetCodeV2(PlanktonDev , gabung , Email , pasw , cokie):
+        global ok
+        headers = {
+           'authority': 'api.internal.temp-mail.io',
+           'accept': 'application/json, text/plain, */*',
+           'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+           'application-name': 'web',
+           'application-version': '2.4.2',
+           'origin': 'https://temp-mail.io',
+           'referer': 'https://temp-mail.io/',
+           'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+           'sec-ch-ua-mobile': '?1',
+           'sec-ch-ua-platform': '"Android"',
+           'sec-fetch-dest': 'empty',
+           'sec-fetch-mode': 'cors',
+           'sec-fetch-site': 'same-site',
+           'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+        mail = PlanktonDev.data["reg_email__"]
+        getcode = PlanktonDev.ses.get(f'https://api.internal.temp-mail.io/api/v3/email/{mail}/messages').json()
+        teks = 'Menunggu Kode Konfirmasi'
+        PlanktonDev.DelayCreate(teks , 20)
         try:
-            # Login menggunakan email catch-all
-            with imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT) as mail:
-                mail.login(CATCHALL_EMAIL, EMAIL_PASSWORD)
-                mail.select("inbox")
-
-                # Cari email berdasarkan alamat tujuan
-                status, messages = mail.search(None, f'TO "{email_address}" UNSEEN')
-                if status == "OK" and messages[0]:
-                    for num in messages[0].split():
-                        status, data = mail.fetch(num, "(RFC822)")
-                        if status == "OK":
-                            msg = email.message_from_bytes(data[0][1])
-                            subject = msg["subject"]
-                            match = re.search(r"FB-(\d+)", subject)
-                            if match:
-                                return match.group(1)
-                return None 
-        except Exception as e:
-            print(f"Error saat membaca email: {e}. Retrying...")
-            retry -= 1
-
-    raise ConnectionError(f"Gagal membaca kode verifikasi untuk email: {email_address}")
-
-def GetCodeV2(PlanktonDev, gabung, Email, pasw, cokie):
-    global ok
-    print(f"Menunggu kode untuk email {Email}...")
-
-    kode = fetch_verification_code_from_mailu(Email)
-
-    if not kode:
-        print("Kode verifikasi tidak ditemukan. Mencoba lagi...")
-        PlanktonDev.GetCodeV2(gabung, Email, pasw, cokie)
-        return
-
-    verif = Tree(Panel("  [italic green]Verifikasi Akun Anda", width=29), guide_style="bold grey100")
-    try:
-        prox = PlanktonDev.prox["http"]
-    except:
-        prox = PlanktonDev.prox
-
-    if autoconfirm[0] in ["y", "Y"]:
-        with open("AkunCreate.txt", "a") as fu:
-            fu.write(Email + "|" + pasw + "|" + cokie + "\n")
-        verif.add(f"Kode   : [italic green]{kode}")
-        verif.add(f"Proxy  : [italic green]{prox}")
-        PlanktonDev.ConfirmEmail(kode, gabung, verif)
-    elif autoconfirm[0] in ["t", "T"]:
-        with open("NonConfirmCreate.txt", "a") as fu:
-            fu.write(Email + "|" + pasw + "|" + cokie + "|" + kode + "\n")
-        verif.add(f"Kode     : [italic green]{kode}")
-        verif.add(f"Proxy    : [italic green]{prox}")
-        verif.add("Status   : [italic green]Akun Belum Terkonfirmasi")
-        gabung.add(verif, style="bold white")
-        cetak(gabung)
-        ok += 1
+            ges = getcode[0]['subject']
+            cods = re.search('FB-(.*?) adalah kode konfirmasi' , str(ges)).group(1)
+        except(Exception) as e:PlanktonDev.GetCodeV2(gabung , Email , pasw , cokie)
+        verif = Tree(Panel('  [italic green]Verifikasi Akun Anda' , width = 29) , guide_style="bold grey100")
+        try:prox = PlanktonDev.prox["http"]
+        except:prox = PlanktonDev.prox
+        if autoconfirm[0] in ['y','Y']:
+            with open('AkunCreate.txt' , 'a') as fu:
+                fu.write(Email +'|' +pasw +'|'+ cokie + '\n')
+            verif.add(f'Kode   : [italic green]{cods}')
+            verif.add(f'Proxy  : [italic green]{prox}')
+            PlanktonDev.ConfirmEmail(cods , gabung , verif)
+        elif autoconfirm[0] in ['t','T']:
+            with open('NonConfirmCreate.txt' , 'a') as fu:
+                fu.write(Email +'|' +pasw +'|'+ cokie + '|' +cods + '\n')
+            verif.add(f'Kode     : [italic green]{cods}')
+            verif.add(f'Proxy    : [italic green]{prox}')
+            verif.add('Status   : [italic green]Akun Belum Terkonfirmasi')
+            gabung.add(verif , style = 'bold white')
+            cetak(gabung)
+            ok+=1
 
     def ConfirmEmail(PlanktonDev , code , gabung , verif):
         global ok
