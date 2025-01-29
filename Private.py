@@ -363,7 +363,7 @@ class TanyaTanya:
         elif user in ['0','00']:
             Console(width = 64).print(Panel(f'[italic green]Laporkan Bug Pada Sc Atau Requests Menu :)' , width = 64 , style = 'bold white') , justify = 'center')
             Console(width = 64).print(Panel(f'[italic green]Anda Akan Di Arahkan Ke Whatsapp Author!!' , width = 64 , style = 'bold white') , justify = 'center')
-            os.system('xdg-open https://wa.me/6285767630210')
+            os.system('xdg-open https://wa.me/6285777785464')
             Console(width = 64).print(Panel(f'[italic green]Terima Kasih Atas Sarannya. Dalung X PlanktonDev!!' , width = 64 , style = 'bold white') , justify = 'center')
 
 class CreateAcount:
@@ -400,70 +400,22 @@ class CreateAcount:
         PlanktonDev.CreatePassword()
         PlanktonDev.InputData()
 
-    def GetData(PlanktonDev):
+    def GetData(Arif_xeyracode):
         crome = random.randint(100,200)
-        user_agents = os.getenv("USER_AGENTS").split(",")
-        ua = random.choice(user_agents).strip()
-
-        headers = {
-           'authority': 'web.facebook.com',
-           'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7','accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-           'referer': 'https://web.facebook.com/?lsrc=lbr&__req=5',
-           'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-           'sec-ch-ua-mobile': '?0',
-           'sec-ch-ua-platform': '"Linux"',
-           'sec-fetch-dest': 'document',
-           'sec-fetch-mode': 'navigate',
-           'sec-fetch-site': 'same-origin',
-           'sec-fetch-user': '?1',
-           'upgrade-insecure-requests': '1',
-           'user-agent': ua,
-        }
-
-        params = {'entry_point': 'login'}
-        pos = PlanktonDev.ses.get('https://web.facebook.com/r.php', params = params , headers = headers , cookies = PlanktonDev.ses.cookies.get_dict()).text
-
-        PlanktonDev.headers.update({
-           'authority': 'web.facebook.com',
-           'accept': '*/*',
-           'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-           'content-type': 'application/x-www-form-urlencoded',
-           'origin': 'https://web.facebook.com',
-           'referer': 'https://web.facebook.com/r.php?next=https%3A%2F%2Fm.facebook.com%2Fconfirmemail.php%3Fnext%3Dhttps%253A%252F%252Fweb.facebook.com%252F%253Flsrc%253Dlbr%26wtsid%3Drdr_0gANHXYCTrh4uk9DI&locale=id_ID&display=page&entry_point=login',
-           'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-           'sec-ch-ua-mobile': '?1',
-           'sec-ch-ua-platform': '"Android"',
-           'sec-fetch-dest': 'empty',
-           'sec-fetch-mode': 'cors',
-           'sec-fetch-site': 'same-origin',
-           'user-agent': ua,
-           'x-asbd-id': str(random.randrange(100000, 999999)),
-           'x-fb-lsd': re.search('name="lsd" value="(.*?)"' , str(pos)).group(1)
-        })
-
-        jazoest = re.search('name="jazoest" value="(.*?)"' , str(pos)).group(1)
-        lsd = re.search('name="lsd" value="(.*?)"' , str(pos)).group(1)
-        ri = re.search('name="ri" value="(.*?)" ' , str(pos)).group(1)
-        reg = re.search('name="reg_instance" value="(.*?)"', str(pos)).group(1)
-        captcha = re.search('name="captcha_persist_data" value="(.*?)" ' , str(pos)).group(1)
-        hs = re.search('"haste_session":"(.*?)"', str(pos)).group(1)
-        rev = re.search('{"consistency":{"rev":(.*?)}', str(pos)).group(1)
-        hsi = re.search(r'"hsi":"(.*?)"', str(pos)).group(1)
-        spinr = re.search('"__spin_r":(.*?),', str(pos)).group(1)
-        spint = re.search('"__spin_t":(.*?),', str(pos)).group(1)
-
-        PlanktonDev.data.update({
-           'jazoest': jazoest,
-           'lsd': lsd,
-           'ri': ri,
-           'reg_instance': reg,
-           'captcha_persist_data': captcha,
-           '__hs': hs,
-           '__rev': rev,
-           '__hsi': hsi,
-           '__spin_r': spinr,
-           '__spin_t': spint,
-        })
+        ua = str(random.choice([
+           'Mozilla/5.0 (Linux; Android 13; SM-A715F Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.196 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; SM-G998B Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.60 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; SM-A336B Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/107.0.5304.141 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/127.0.0.0 Mobile DuckDuckGo/5 Safari/537.36',
+           'Mozilla/5.0 (Linux; arm_64; Android 13; Retroid Pocket 4 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.96 YaBrowser/24.4.3.96.00 SA/3 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; 20JJS0CU1M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.113 Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-F7210) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/19.0 Chrome/102.0.5005.125 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; arm_64; Android 13; 23021RAA2Y) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.1.88.00 SA/3 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; arm_64; Android 13; 23021RAAEG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaApp_Android/23.34.1 YaSearchBrowser/23.34.1 BroPP/1.0 SA/3 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; SM-F936W) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36',
+           'Mozilla/5.0 (Linux; Android 13; 23030RAC7Y) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.135 Mobile Safari/537.36 OPR/75.3.3978.72666   Opera Mobile 75',
+           'Mozilla/5.0 (Linux; Android 13; 2303CRA44A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Mobile Safari/537.36'
+        ]))
 
     def DelayCreate(PlanktonDev , teks , jum):
         hihi = ['+','+','-','•','!','?']
@@ -478,13 +430,27 @@ class CreateAcount:
         return tanggal , bulan , tahun
 
     def CreateEmail(PlanktonDev):
-        domain_list = os.getenv("DOMAINS").split(",")
-        domain = random.choice(domain_list)
-        nama = ''.join(random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=random.randint(8, 12)))
-        email_address = f"{nama}@{domain}"
-        PlanktonDev.data = {"reg_email__": email_address}
-        print(f"Generated Local Email: {email_address}")
-        return email_address
+        headers = {
+           'authority': 'api.internal.temp-mail.io',
+           'accept': 'application/json, text/plain, */*',
+           'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+           'application-name': 'web',
+           'application-version': '2.4.2',
+           'origin': 'https://temp-mail.io',
+           'referer': 'https://temp-mail.io/',
+           'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+           'sec-ch-ua-mobile': '?1',
+           'sec-ch-ua-platform': '"Android"',
+           'sec-fetch-dest': 'empty',
+           'sec-fetch-mode': 'cors',
+           'sec-fetch-site': 'same-site',
+           'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+        domain = str(random.choice(['zlorkun.com','somelora.com','vvatxiy.com','dygovil.com','tidissajiiu.com','vafyxh.com','knmcadibav.com','smykwb.com','wywnxa.com','qacmjeq.com','qejjyl.com','zvvzuv.com','bltiwd.com','qzueos.com','vwhins.com','jxpomup.com','ibolinva.com','wyoxafp.com','osxofulk.com' , 'jkotypc.com']))
+        nama = ''.join(random.choice(random.choice('abcdefghijklmnopqrstuvwxyz')) for _ in range(int(random.randint(8,10))))
+        data = {'name': nama,'domain': domain}
+        mail = PlanktonDev.ses.post('https://api.internal.temp-mail.io/api/v3/email/new', json = data).json()['email']
+        return mail
 
     def CreatePassword(PlanktonDev):
         abs = random.choice(['abcdefghijklmnopqrstuvwxyz'])
@@ -1002,7 +968,7 @@ def lisensi():
         user = Console().input('\n[bold white]([bold green]•[bold white]) Pilih : ')
         if user in ['01','1']:
             cetak(f'[bold white]([bold green]•[bold white]) Kamu Akan Diarahkan Ke Whatsapp Author')
-            os.system('xdg-open https://wa.me/+6285767630210?text=assalamualaikum%20bang%20ArifXeyracode%20Dev,%20beli%20license%20dong')
+            os.system('xdg-open https://wa.me/+6285777785464?text=assalamualaikum%20bang%20ArifXeyracode%20Dev,%20beli%20license%20dong')
             exit()
         elif user in ['02','2']:
             key = Console().input('[bold white]([bold green]•[bold white]) Masukan Lisensi : ')
