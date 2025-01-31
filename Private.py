@@ -1040,7 +1040,7 @@ def cekdurasi(created , exp , key):
         nol = keyu.split(':')[0]
         if int(nol)<1:
             cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Telah Berakhir Pada : {tahun}-{bulan}-{tanggal}')
-            os.remove('/Datakey/.licenkey')
+            os.remove('Datakey/.licenkey')
         else:
             cetak('\n[bold white]([bold green]©[bold white]) Arif Xeyracode')
             cetak('\n[bold white]([bold green]•[bold white]) Lisensi Terdaftar')
@@ -1048,7 +1048,7 @@ def cekdurasi(created , exp , key):
             cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
             cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
             cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {keyu}')
-            open('/Datakey/.licenkey' , 'w').write(key)
+            open('Datakey/.licenkey' , 'w').write(key)
     else:
         sisa = str(ceku).split(',')[0]
         cetak('\n[bold white]([bold green]©[bold white]) Arif Xeyracode')
@@ -1057,11 +1057,11 @@ def cekdurasi(created , exp , key):
         cetak(f'[bold white]([bold green]•[bold white]) Create  : {created.split("T")[0]}')
         cetak(f'[bold white]([bold green]•[bold white]) Expires : {exp.split("T")[0]}')
         cetak(f'[bold white]([bold green]•[bold white]) Sisa    : {sisa}')
-        open('/Datakey/.licenkey' , 'w').write(key)
+        open('Datakey/.licenkey' , 'w').write(key)
 
 def lisensi():
     try:
-        key = open('/Datakey/.licenkey' , 'r').read()
+        key = open('Datakey/.licenkey' , 'r').read()
     except(FileNotFoundError):
         os.system('clear')
         cetak(f'[bold white]([bold green]01[bold white]) Beli Lisensi\n[bold white]([bold green]02[bold white]) Masukan Lisensi')
@@ -1083,7 +1083,7 @@ def lisensi():
             TanyaTanya().Menu()
         elif block == True:
             cetak('[bold white]([bold red]×[bold white]) Maaf Lisensi Anda Telah Di Blokir')
-            os.remove('/Datakey/.licenkey')
+            os.remove('Datakey/.licenkey')
     except(FileNotFoundError) as s:pass
     except(Exception) as e:
         cetak(f'[bold white]([bold red]×[bold white]) Lisensi Anda Tidak Valid')
