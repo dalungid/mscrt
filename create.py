@@ -65,7 +65,7 @@ def create_mail_tm_account(proxy=None):
             print(f'[×] Error : {e}')
             return None, None, None, None, None
 
-def register_facebook_account(email, password, first_name, last_name, birthday, proxy=None, retry=False):
+def register_facebook_account(email, password, first_name, last_name, birthday, proxy=None, retry=False, max_retries=3):
     api_key = '882a8490361da98702bf97a021ddc14d'
     secret = '62f8ce9f74b12f84c123cc23437a4a32'
     gender = random.choice(['M', 'F'])
@@ -101,34 +101,54 @@ def register_facebook_account(email, password, first_name, last_name, birthday, 
             proxies=proxy
         )
         reg = response.json()
+
+        # Debugging the response to check its structure
+        print(f"Response: {json.dumps(reg, indent=2)}")
+
         if 'error' in reg:
             error_msg = reg["error"]["message"]
             print(f'[×] Facebook Error: {error_msg}')
             if "checkpoint" in error_msg.lower() and not retry:
                 print("[!] Account is under Facebook Checkpoint. Retrying...")
                 time.sleep(5)  # Optional delay before retry
-                return register_facebook_account(email, password, first_name, last_name, birthday, proxy, retry=True)
+                if retry < max_retries:
+                    return register_facebook_account(email, password, first_name, last_name, birthday, proxy, retry=True, max_retries=max_retries)
+                else:
+                    print("[!] Max retry limit reached.")
+            else:
+                print("[!] Error occurred: ", error_msg)
             return
-        id = reg['new_user_id']
-        session_key = reg['session_info']['session_key']
-        cookies = {
-            'c_user': str(id),
-            'xs': session_key
-        }
-        print(f"\n{H}✔ {P}Registrasi Berhasil!")
-        print(f"{A}├ Nama   : {H}{first_name} {last_name}")
-        print(f"{A}├ ID     : {H}{id}")
-        print(f"{A}├ Email  : {H}{email}")
-        print(f"{A}├ Pass   : {H}{password}")
-        print(f"{A}└ Cookie : {H}{json.dumps(cookies)}{P}\n")
-        # Save to file
-        with open('accounts.txt', 'a') as f:
-            f.write(f"Email: {email} | Password: {password} | Name: {first_name} {last_name} | ID: {id} | Cookies: {json.dumps(cookies)}\n")
+
+        # Handle the successful case
+        if 'new_user_id' in reg and 'session_info' in reg:
+            id = reg['new_user_id']
+            session_key = reg['session_info'].get('session_key', None)
+            access_token = reg['session_info'].get('access_token', None)
+
+            cookies = {
+                'c_user': str(id),
+                'xs': session_key
+            }
+
+            print(f"\n{H}✔ {P}Registration Successful!")
+            print(f"{A}├ Name   : {H}{first_name} {last_name}")
+            print(f"{A}├ ID     : {H}{id}")
+            print(f"{A}├ Email  : {H}{email}")
+            print(f"{A}├ Pass   : {H}{password}")
+            print(f"{A}└ Cookie : {H}{json.dumps(cookies)}{P}")
+            print(f"{A}└ Access Token: {H}{access_token}{P}")
+            
+            # Save to file
+            with open('accounts.txt', 'a') as f:
+                f.write(f"Email: {email} | Password: {password} | Name: {first_name} {last_name} | ID: {id} | Cookies: {json.dumps(cookies)} | Access Token: {access_token}\n")
+
+        else:
+            print(f'[×] Registration Error: Missing expected fields in response: {json.dumps(reg)}')
+
     except Exception as e:
         print(f'[×] Registration Error: {e}')
 
 def test_proxy(proxy, q, valid_proxies):
-    loading_process(f"Testing Proxy {proxy['http']}...", delay=0.3)
     if test_proxy_helper(proxy):
         valid_proxies.append(proxy)
     q.task_done()
@@ -136,22 +156,16 @@ def test_proxy(proxy, q, valid_proxies):
 def test_proxy_helper(proxy):
     try:
         response = requests.get('https://api.mail.tm', proxies=proxy, timeout=5)
+        print(f'Pass: {proxy}')
         return response.status_code == 200
     except:
+        print(f'Fail: {proxy}')
         return False
 
 def load_proxies():
     with open('proxies.txt', 'r') as file:
         proxies = [line.strip() for line in file]
-    
-    proxy_list = []
-    for proxy in proxies:
-        # Detect if the proxy is HTTP or SOCKS
-        if proxy.startswith("socks4://") or proxy.startswith("socks5://"):
-            proxy_list.append({'http': proxy, 'https': proxy})
-        else:
-            proxy_list.append({'http': f'http://{proxy}', 'https': f'http://{proxy}'})
-    return proxy_list
+    return [{'http': f'http://{proxy}'} for proxy in proxies]
 
 def get_working_proxies():
     proxies = load_proxies()
@@ -160,12 +174,12 @@ def get_working_proxies():
     for proxy in proxies:
         q.put(proxy)
     
-    for _ in range(10):
+    for _ in range(10):  # 10 threads
         worker = threading.Thread(target=worker_test_proxy, args=(q, valid_proxies))
         worker.daemon = True
         worker.start()
     
-    q.join()
+    q.join()  # Block until all tasks are done
     return valid_proxies
 
 def worker_test_proxy(q, valid_proxies):
@@ -176,6 +190,7 @@ def worker_test_proxy(q, valid_proxies):
         test_proxy(proxy, q, valid_proxies)
 
 working_proxies = get_working_proxies()
+
 
 if not working_proxies:
     print('[×] No working proxies found. Please check your proxies.')
