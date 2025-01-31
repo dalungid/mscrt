@@ -6,6 +6,8 @@ import string
 import json
 import hashlib
 from faker import Faker
+import socks  # For SOCKS proxy support
+import socket  # To support SOCKS proxy with requests
 
 # Color codes
 H = '\033[92m'  # Green
@@ -135,7 +137,15 @@ def test_proxy_helper(proxy):
 def load_proxies():
     with open('proxies.txt', 'r') as file:
         proxies = [line.strip() for line in file]
-    return [{'http': f'http://{proxy}', 'https': f'http://{proxy}'} for proxy in proxies]
+    
+    proxy_list = []
+    for proxy in proxies:
+        # Detect if the proxy is HTTP or SOCKS
+        if proxy.startswith("socks4://") or proxy.startswith("socks5://"):
+            proxy_list.append({'http': proxy, 'https': proxy})
+        else:
+            proxy_list.append({'http': f'http://{proxy}', 'https': f'http://{proxy}'})
+    return proxy_list
 
 def get_working_proxies():
     proxies = load_proxies()
