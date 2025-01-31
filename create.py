@@ -5,6 +5,7 @@ import random
 import string
 import json
 import hashlib
+import time
 from faker import Faker
 import socks  # For SOCKS proxy support
 import socket  # To support SOCKS proxy with requests
@@ -14,16 +15,14 @@ H = '\033[92m'  # Green
 A = '\033[94m'  # Blue
 P = '\033[0m'   # Reset
 
-print(f"""
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓           
-> › Github :- @jatintiwari0 
-> › By      :- JATIN TIWARI
-> › Proxy Support Added by @coopers-lab
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛                """)
-print('\x1b[38;5;208m⇼'*60)
-print('\x1b[38;5;22m•'*60)
-print('\x1b[38;5;22m•'*60)
-print('\x1b[38;5;208m⇼'*60)
+def loading_process(message, delay=0.1):
+    """Display a loading animation."""
+    animation = ['|', '/', '-', '\\']
+    for _ in range(20):
+        for symbol in animation:
+            print(f"\r{message} {symbol}", end="", flush=True)
+            time.sleep(delay)
+    print(f"\r{message} Done!         ", end="", flush=True)
 
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
@@ -66,7 +65,7 @@ def create_mail_tm_account(proxy=None):
             print(f'[×] Error : {e}')
             return None, None, None, None, None
 
-def register_facebook_account(email, password, first_name, last_name, birthday, proxy=None):
+def register_facebook_account(email, password, first_name, last_name, birthday, proxy=None, retry=False):
     api_key = '882a8490361da98702bf97a021ddc14d'
     secret = '62f8ce9f74b12f84c123cc23437a4a32'
     gender = random.choice(['M', 'F'])
@@ -93,6 +92,7 @@ def register_facebook_account(email, password, first_name, last_name, birthday, 
     ensig = hashlib.md5((sig + secret).encode()).hexdigest()
     req['sig'] = ensig
     api_url = 'https://b-api.facebook.com/method/user.register'
+    
     try:
         response = requests.post(
             api_url,
@@ -102,7 +102,12 @@ def register_facebook_account(email, password, first_name, last_name, birthday, 
         )
         reg = response.json()
         if 'error' in reg:
-            print(f'[×] Facebook Error: {reg["error"]["message"]}')
+            error_msg = reg["error"]["message"]
+            print(f'[×] Facebook Error: {error_msg}')
+            if "checkpoint" in error_msg.lower() and not retry:
+                print("[!] Account is under Facebook Checkpoint. Retrying...")
+                time.sleep(5)  # Optional delay before retry
+                return register_facebook_account(email, password, first_name, last_name, birthday, proxy, retry=True)
             return
         id = reg['new_user_id']
         session_key = reg['session_info']['session_key']
@@ -123,6 +128,7 @@ def register_facebook_account(email, password, first_name, last_name, birthday, 
         print(f'[×] Registration Error: {e}')
 
 def test_proxy(proxy, q, valid_proxies):
+    loading_process(f"Testing Proxy {proxy['http']}...", delay=0.3)
     if test_proxy_helper(proxy):
         valid_proxies.append(proxy)
     q.task_done()
